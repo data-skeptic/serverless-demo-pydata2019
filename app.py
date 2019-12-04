@@ -4,12 +4,10 @@ from chalice import Chalice
 import json
 
 
-app = Chalice(app_name='demo')
 db = boto3.resource('dynamodb', region_name='us-east-2')
 table = db.Table('ShoutOuts')
-
 data = table.scan()
-print(data)
+app = Chalice(app_name='demo')
 
 
 @app.route('/')
