@@ -1,7 +1,8 @@
 import boto3
-
 from chalice import Chalice
+from chalice import Response
 import json
+import pandas as pd
 
 
 db = boto3.resource('dynamodb', region_name='us-east-2')
@@ -12,6 +13,19 @@ app = Chalice(app_name='demo')
 
 @app.route('/')
 def index():
+    data = table.scan()
+    df = pd.DataFrame(data['Items'])
+    cols = ['name', 'msg']
+    df = df[cols].copy()
+    body = df.to_html()
+    return  Response(body=body,
+            status_code=200,
+            headers={'Content-Type': 'text/html'})
+
+
+
+@app.route('/shouts', methods=['GET'])
+def get_shouts():
     data = table.scan()
     print(data)
     return data['Items']
